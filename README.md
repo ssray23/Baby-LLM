@@ -126,7 +126,7 @@ This reads the text, creates a word-level vocabulary, trains the neural network 
 ### 3. Running the Server & Frontend
 Start the FastAPI server:
 ```bash
-uvicorn app:app --reload --port 8000
+python3 -m uvicorn app:app --reload --port 8000
 ```
 
 Once started:

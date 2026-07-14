@@ -1,0 +1,11 @@
+[Q]: What is artificial intelligence?
+[A]: Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. These processes include learning, reasoning, and self-correction.
+
+[Q]: What is the internet?
+[A]: The internet is a global system of interconnected computer networks that uses the Internet protocol suite to communicate between networks and devices.
+
+[Q]: What is Python?
+[A]: Python is a high-level programming language known for its readability.
+
+[Q]: What is JavaScript used for?
+[A]: JavaScript is primarily used for web development.

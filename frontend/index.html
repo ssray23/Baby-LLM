@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby LLM v1.0</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div class="logo" style="margin-bottom: 0;">
+                    <span class="gradient-text">Baby LLM</span>
+                    <span class="version-badge">v1.0</span>
+                </div>
+                <button id="train-btn" class="secondary-btn" title="Train Model">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Train
+                </button>
+            </div>
+            <p style="text-align: left; margin-top: 4px;">Your local, lightweight AI</p>
+        </header>
+
+        <div class="chat-box" id="chat-box">
+            <div class="message ai-message">
+                <div class="avatar">🤖</div>
+                <div class="bubble">Hello! I am Baby LLM v1.0, trained on local text files. What would you like to ask?</div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type a prompt to generate text..." autocomplete="off">
+            <button id="send-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

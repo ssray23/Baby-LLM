@@ -1,0 +1,14 @@
+[Q]: How many continents are on Earth?
+[A]: Earth has seven continents: Africa, Antarctica, Asia, Europe, North America, Australia, and South America.
+
+[Q]: What is the highest mountain?
+[A]: The highest mountain is Mount Everest.
+
+[Q]: At what temperature does water boil and freeze?
+[A]: Water boils at 100 degrees Celsius and freezes at 0 degrees Celsius.
+
+[Q]: What is the longest river in the world?
+[A]: The Amazon River is the longest river in the world by some measures, while the Nile is considered the longest by others.
+
+[Q]: How does rain fall?
+[A]: Rain falls from clouds when water vapor condenses into droplets.

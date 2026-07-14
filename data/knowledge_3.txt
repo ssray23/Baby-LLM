@@ -1,0 +1,32 @@
+[Q]: How many planets does our solar system have?
+[A]: Our solar system has eight planets.
+
+[Q]: What is the Sun?
+[A]: The Sun is a star at the center of the solar system.
+
+[Q]: What orbits the Earth?
+[A]: The Moon orbits the Earth.
+
+[Q]: How fast does light travel?
+[A]: Light travels extremely fast, about 300,000 kilometers per second.
+
+[Q]: Why do we see lightning before we hear thunder?
+[A]: Sound travels much slower than light, which is why we see lightning before we hear thunder.
+
+[Q]: Who formulated the laws of motion?
+[A]: Isaac Newton formulated the laws of motion and universal gravitation.
+
+[Q]: What did Albert Einstein develop?
+[A]: Albert Einstein developed the theory of relativity.
+
+[Q]: What did Albert Einstein do?
+[A]: Albert Einstein developed the theory of relativity.
+
+[Q]: what did Albert einstien do?
+[A]: Albert Einstein developed the theory of relativity.
+
+[Q]: Who invented the theory of relativity?
+[A]: Albert Einstein developed the theory of relativity.
+
+[Q]: Tell me about Albert Einstein.
+[A]: Albert Einstein developed the theory of relativity.

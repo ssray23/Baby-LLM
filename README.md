@@ -113,7 +113,7 @@ During generation, the model:
 ### 1. Installation
 Ensure you have Python 3.8+ installed, then install the dependencies:
 ```bash
-pip install torch fastapi uvicorn pydantic
+pip install torch fastapi uvicorn pydantic scikit-learn
 ```
 
 ### 2. Training the Model

@@ -74,6 +74,7 @@ At the heart of the `BabyTransformerLayer` is Self-Attention. It allows the mode
 ---
 
 ### 3. Residual Connections & Layer Normalization
+* **Layer Normalization (`nn.LayerNorm`)**: Applied *before* the attention and feed-forward networks (Pre-Norm architecture). This stabilizes the learning process by ensuring activation variances don't blow up across the deep stacked layers, which is crucial for preventing garbled text generation.
 * **Residual Connections (`x = x + attention_out`)**: High-speed highways that bypass the transformer blocks. They add the block's input back to its output. This prevents gradients from shrinking (vanishing) during backpropagation, allowing us to build deeper networks.
 * **Feed-Forward Networks (FFN)**: After aggregating context from other tokens via attention, each token vector is passed through a simple multi-layer perceptron (Linear $\rightarrow$ ReLU $\rightarrow$ Linear) in isolation. This allows the model to perform computations and process the gathered context.
 
@@ -83,9 +84,11 @@ At the heart of the `BabyTransformerLayer` is Self-Attention. It allows the mode
 During generation, the model:
 1. Takes a sequence of up to 64 tokens.
 2. Performs a forward pass to produce a vocabulary probability distribution (logits) for the next token.
-3. Takes the logit at the very last token position and applies **Softmax** to convert it into a probability distribution.
-4. Uses **Multinomial Sampling** (`torch.multinomial`) to randomly pick the next word weighted by its probability, avoiding repetitive outputs.
-5. Appends the new word to the prompt and repeats (autoregressive generation).
+3. Takes the logit at the very last token position and applies **Temperature Scaling** (e.g. `0.8`) to make the probability distribution peak sharper around highly likely words.
+4. Applies **Top-K Filtering** (e.g. `k=10`), throwing away the tail of unlikely words so the model cannot hallucinate absurd tokens.
+5. Applies **Softmax** to convert the filtered logits into a probability distribution.
+6. Uses **Multinomial Sampling** (`torch.multinomial`) to randomly pick the next word weighted by its probability, avoiding repetitive outputs.
+7. Checks for **Stop Tokens**: If the model predicts an end-of-sentence or end-of-thought token, it immediately stops generating to avoid rambling. Otherwise, it appends the new word and repeats.
 
 ---
 

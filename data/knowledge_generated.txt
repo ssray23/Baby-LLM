@@ -1,0 +1,48 @@
+[Q]: What is photosynthesis?
+[A]: Photosynthesis is the process plants use to convert sunlight into energy.
+
+[Q]: Can you explain photosynthesis?
+[A]: Photosynthesis is the process plants use to convert sunlight into energy.
+
+[Q]: Tell me about photosynthesis.
+[A]: Photosynthesis is the process plants use to convert sunlight into energy.
+
+[Q]: Define photosynthesis.
+[A]: Photosynthesis is the process plants use to convert sunlight into energy.
+
+[Q]: Who is Marie Curie?
+[A]: Marie Curie discovered radioactivity and won two Nobel Prizes.
+
+[Q]: What did Marie Curie do?
+[A]: Marie Curie discovered radioactivity and won two Nobel Prizes.
+
+[Q]: Tell me about Marie Curie.
+[A]: Marie Curie discovered radioactivity and won two Nobel Prizes.
+
+[Q]: What is Marie Curie known for?
+[A]: Marie Curie discovered radioactivity and won two Nobel Prizes.
+
+[Q]: How many moons does Mars have?
+[A]: Mars has two moons, named Phobos and Deimos.
+
+[Q]: What is the number of moons orbiting Mars?
+[A]: Mars has two moons, named Phobos and Deimos.
+
+[Q]: Where is Mount Kilimanjaro?
+[A]: Mount Kilimanjaro is located in Tanzania and is the highest mountain in Africa.
+
+[Q]: Where is Mount Kilimanjaro located?
+[A]: Mount Kilimanjaro is located in Tanzania and is the highest mountain in Africa.
+
+[Q]: Tell me about the location of Mount Kilimanjaro.
+[A]: Mount Kilimanjaro is located in Tanzania and is the highest mountain in Africa.
+
+[Q]: How does photosynthesis work?
+[A]: Photosynthesis works by using chlorophyll to capture sunlight and convert carbon dioxide and water into glucose and oxygen.
+
+[Q]: Explain how photosynthesis works.
+[A]: Photosynthesis works by using chlorophyll to capture sunlight and convert carbon dioxide and water into glucose and oxygen.
+
+[Q]: What happens during photosynthesis?
+[A]: Photosynthesis works by using chlorophyll to capture sunlight and convert carbon dioxide and water into glucose and oxygen.
+

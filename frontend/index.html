@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baby LLM v1.0</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <script type="module">
+        if (!('commandForElement' in HTMLButtonElement.prototype)) {
+            import('https://esm.run/invokers-polyfill');
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="chat-container">
@@ -15,16 +20,44 @@
                     <span class="gradient-text">Baby LLM</span>
                     <span class="version-badge">v1.0</span>
                 </div>
-                <button id="train-btn" class="secondary-btn" title="Train Model">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                    </svg>
-                    Train
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button commandfor="settings-modal" command="show-modal" class="secondary-btn icon-only-btn" title="Settings">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </button>
+                    <button id="train-btn" class="secondary-btn" title="Train Model">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                        Train
+                    </button>
+                </div>
             </div>
             <p style="text-align: left; margin-top: 4px;">Your local, lightweight AI</p>
         </header>
+
+        <dialog id="settings-modal" closedby="any" aria-labelledby="settings-title">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 id="settings-title" style="font-size: 18px; font-weight: 600; margin: 0; color: white;">Settings</h2>
+                    <button commandfor="settings-modal" command="close" class="close-btn" aria-label="Close settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                
+                <div class="settings-panel">
+                    <div class="slider-header">
+                        <span>Retrieval Threshold</span>
+                        <span id="threshold-val" class="threshold-badge">0.65</span>
+                    </div>
+                    <input type="range" id="threshold-slider" min="0.0" max="1.0" step="0.01" value="0.65">
+                    <p class="settings-explainer">High threshold forces the generative model to talk. Low threshold restricts answers to exact knowledge base matches.</p>
+                </div>
+            </div>
+        </dialog>
 
         <div class="chat-box" id="chat-box">
             <div class="message ai-message">

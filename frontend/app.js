@@ -1,6 +1,29 @@
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+const thresholdSlider = document.getElementById('threshold-slider');
+const thresholdVal = document.getElementById('threshold-val');
+
+thresholdSlider.addEventListener('input', (e) => {
+    thresholdVal.textContent = parseFloat(e.target.value).toFixed(2);
+});
+
+// Fallback for light-dismiss if closedby is not supported natively
+const settingsModal = document.getElementById('settings-modal');
+if (!('closedBy' in HTMLDialogElement.prototype)) {
+    settingsModal.addEventListener('click', (event) => {
+        if (event.target !== settingsModal) return;
+        const rect = settingsModal.getBoundingClientRect();
+        const isDialogContent = (
+            rect.top <= event.clientY &&
+            event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.left + rect.width
+        );
+        if (isDialogContent) return;
+        settingsModal.close();
+    });
+}
 
 function addMessage(text, isUser) {
     const msgDiv = document.createElement('div');
@@ -70,7 +93,11 @@ async function handleSend() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ prompt: text, max_tokens: 150 })
+            body: JSON.stringify({ 
+                prompt: text, 
+                max_tokens: 150,
+                retrieval_threshold: parseFloat(thresholdSlider.value)
+            })
         });
         
         removeTypingIndicator();

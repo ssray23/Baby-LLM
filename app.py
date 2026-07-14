@@ -5,7 +5,7 @@ from pydantic import BaseModel
 import torch
 import re
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from model import BabyGPT
 from train import train_model
@@ -26,14 +26,14 @@ stop_token_ids = None
 # small cannot reliably generalize facts, it can only approximate what it
 # memorized. RETRIEVAL_THRESHOLD was tuned by testing paraphrases against
 # the real data: matches score 0.4-0.8, unrelated questions score ~0.0.
-RETRIEVAL_THRESHOLD = 0.35
+RETRIEVAL_THRESHOLD = 0.65
 qa_pairs = []
-qa_vectorizer = None
+qa_encoder = None
 qa_vectors = None
 
 
 def clean_decoded_text(text):
-    return text.replace(' .', '.').replace(' ?', '?').replace(' ,', ',').replace('[ Q ] :', '[Q]:').replace('[ A ] :', '[A]:').replace('\n ', '\n').strip()
+    return text.replace(' .', '.').replace(' ?', '?').replace(' ,', ',').replace('[ q ] :', '[q]:').replace('[ a ] :', '[a]:').replace('\n ', '\n').strip()
 
 
 def load_qa_pairs(data_dir='data'):
@@ -52,27 +52,28 @@ def load_qa_pairs(data_dir='data'):
 
 
 def build_retrieval_index():
-    global qa_pairs, qa_vectorizer, qa_vectors
+    global qa_pairs, qa_encoder, qa_vectors
     qa_pairs = load_qa_pairs()
     if not qa_pairs:
-        qa_vectorizer, qa_vectors = None, None
+        qa_encoder, qa_vectors = None, None
         print("WARNING: No Q/A pairs found for retrieval index.")
         return
     questions = [q for q, a in qa_pairs]
-    qa_vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2))
-    qa_vectors = qa_vectorizer.fit_transform(questions)
+    print("Loading semantic embedding model (this may take a few seconds on first run)...")
+    qa_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+    qa_vectors = qa_encoder.encode(questions)
     print(f"Retrieval index built: {len(qa_pairs)} Q/A pairs.")
 
 
-def retrieve_answer(user_prompt):
+def retrieve_answer(user_prompt, threshold=0.65):
     """Returns (answer, score) for the closest known question, or (None, 0.0)."""
-    if qa_vectorizer is None:
+    if qa_encoder is None:
         return None, 0.0
-    v = qa_vectorizer.transform([user_prompt])
+    v = qa_encoder.encode([user_prompt])
     sims = cosine_similarity(v, qa_vectors)[0]
     best_idx = sims.argmax()
     best_score = sims[best_idx]
-    if best_score >= RETRIEVAL_THRESHOLD:
+    if best_score >= threshold:
         return qa_pairs[best_idx][1], float(best_score)
     return None, float(best_score)
 
@@ -119,6 +120,7 @@ build_retrieval_index()
 class GenerateRequest(BaseModel):
     prompt: str
     max_tokens: int = 50 # Reduced because 1 token = 1 word now, 50 words is plenty
+    retrieval_threshold: float = 0.65
 
 @app.post("/generate")
 def generate_text(req: GenerateRequest):
@@ -130,7 +132,7 @@ def generate_text(req: GenerateRequest):
     # exists in the training data, answer directly. This is accurate by
     # construction, since it returns text that was actually written by a
     # human, not generated token-by-token by a 4-layer toy model.
-    retrieved_answer, score = retrieve_answer(raw_prompt)
+    retrieved_answer, score = retrieve_answer(raw_prompt, req.retrieval_threshold)
     if retrieved_answer is not None:
         return {"response": retrieved_answer}
 
@@ -138,12 +140,11 @@ def generate_text(req: GenerateRequest):
     if not model:
         return JSONResponse(status_code=500, content={"error": "Model not trained yet or using old weights. Please hit Train."})
 
-    prompt_for_model = raw_prompt[0].upper() + raw_prompt[1:]
+    prompt_for_model = raw_prompt.lower()
     if not prompt_for_model.endswith('?'):
         prompt_for_model += '?'
-    prompt_for_model = prompt_for_model.replace('albert', 'Albert').replace('einstein', 'Einstein')
 
-    formatted_prompt = f"[Q]: {prompt_for_model}\n[A]:"
+    formatted_prompt = f"[q]: {prompt_for_model}\n[a]:"
 
     prompt_tokens = re.findall(r'\w+|[^\w\s]', formatted_prompt)
     for token in prompt_tokens:
@@ -164,14 +165,14 @@ def generate_text(req: GenerateRequest):
     )[0].tolist()
     generated_text = decode(generated_tokens)
 
-    if "[A]:" in generated_text:
-        parts = generated_text.split("[A]:")
+    if "[a]:" in generated_text:
+        parts = generated_text.split("[a]:")
         generated_only = parts[-1]
     else:
         generated_only = generated_text
 
-    if "[Q]:" in generated_only:
-        generated_only = generated_only.split("[Q]:")[0]
+    if "[q]:" in generated_only:
+        generated_only = generated_only.split("[q]:")[0]
 
     clean_answer = generated_only.strip()
 

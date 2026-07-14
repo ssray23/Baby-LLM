@@ -18,6 +18,9 @@ def train_model():
         if filename.endswith(".txt"):
             with open(os.path.join(data_dir, filename), 'r', encoding='utf-8') as f:
                 training_text += f.read() + "\n"
+                
+    # Lowercase text consistently for tokenizing
+    training_text = training_text.lower()
     
     # Vocabulary (Word-Level)
     # This splits text by words and keeps punctuation as separate tokens
@@ -32,28 +35,54 @@ def train_model():
     
     data = torch.tensor(encode(training_text), dtype=torch.long)
     
-    def get_batch():
-        ix = torch.randint(len(data) - context_window, (batch_size,))
-        x = torch.stack([data[i:i+context_window] for i in ix])
-        y = torch.stack([data[i+1:i+context_window+1] for i in ix])
+    # Train/val split
+    n = int(0.9 * len(data))
+    train_data = data[:n]
+    val_data = data[n:]
+    
+    def get_batch(split):
+        d = train_data if split == 'train' else val_data
+        if len(d) <= context_window:
+            d = train_data # fallback if val data is too small
+        ix = torch.randint(len(d) - context_window, (batch_size,))
+        x = torch.stack([d[i:i+context_window] for i in ix])
+        y = torch.stack([d[i+1:i+context_window+1] for i in ix])
         return x.to(device), y.to(device)
     
+    @torch.no_grad()
+    def estimate_loss():
+        out = {}
+        model.eval()
+        for split in ['train', 'val']:
+            losses = torch.zeros(10)
+            for k in range(10):
+                X, Y = get_batch(split)
+                logits, loss = model(X, Y)
+                losses[k] = loss.item()
+            out[split] = losses.mean()
+        model.train()
+        return out
+
     model = BabyGPT(vocab_size).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
     
     print("Training the Baby LLM...")
     for steps in range(max_iters):
-        xb, yb = get_batch()
+        if steps % 500 == 0:
+            losses = estimate_loss()
+            print(f"Step {steps}: Train Loss = {losses['train']:.4f}, Val Loss = {losses['val']:.4f}")
+
+        xb, yb = get_batch('train')
         logits, loss = model(xb, yb)
         
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) # Gradient clipping
         optimizer.step()
-        
-        if steps % 500 == 0:
-            print(f"Step {steps}: Current Loss = {loss.item():.4f}")
     
-    print(f"Final Loss: {loss.item():.4f}")
+    losses = estimate_loss()
+    print(f"Final Loss: Train={losses['train']:.4f}, Val={losses['val']:.4f}")
+    loss = losses['train'] # Keep variable assignment for return value below
     
     # Save the model
     checkpoint = {

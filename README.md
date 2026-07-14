@@ -100,9 +100,9 @@ To make Baby LLM more robust and conversational, the repository implements a min
 Neural networks learn by seeing diverse patterns. If you only train the model on one phrasing of a fact (e.g., "Where is Mount Kilimanjaro?"), it might fail if a user asks "Tell me about the location of Mount Kilimanjaro." 
 The `generate_knowledge.py` script takes simple core facts and programmatically expands them into 3-4 different conversational phrasings. This dramatically increases the model's robustness and semantic understanding without requiring manual data entry.
 
-### 2. TF-IDF Retrieval Fallback (`app.py`)
+### 2. Semantic Embeddings Retrieval Fallback (`app.py`)
 Because our 4-layer toy model is prone to hallucination when faced with entirely unknown queries, the FastAPI backend uses a dual-routing system:
-1. When a user asks a question, the server first compares the query against all known facts using a `scikit-learn` **TF-IDF Vectorizer** (evaluating keyword overlap and relevance).
+1. When a user asks a question, the server first compares the query against all known facts using a local **Sentence Transformers** semantic embedding model (`all-MiniLM-L6-v2`). This evaluates the underlying *meaning* of the question, rather than just matching characters, making it highly robust against typos and creative rephrasing.
 2. If it finds a highly confident exact match in the `data/` directory, it instantly returns the factual, exact answer.
 3. If there is no confident match, it falls back to the **generative Transformer (Baby LLM)** to creatively predict the answer word-by-word using the autoregressive sampling loop.
 
@@ -132,13 +132,13 @@ Because our 4-layer toy model is prone to hallucination when faced with entirely
 ### 1. Installation
 Ensure you have Python 3.8+ installed, then install the dependencies:
 ```bash
-pip install torch fastapi uvicorn pydantic scikit-learn
+pip install torch fastapi uvicorn pydantic scikit-learn sentence-transformers
 ```
 
 ### 2. Training the Model
 To train the model on the custom text files in the `data/` directory, run:
 ```bash
-python train.py
+python3 train.py
 ```
 This reads the text, creates a word-level vocabulary, trains the neural network over `5000` steps using the `AdamW` optimizer, and saves the weights to `baby_llm.pth`.
 
@@ -149,6 +149,6 @@ python3 -m uvicorn app:app --reload --port 8000
 ```
 
 Once started:
-* **Interactive Chat UI**: Open `http://localhost:8000` in your web browser.
+* **Interactive Chat UI**: Open `http://localhost:8000` in your web browser. Includes a declarative Settings Modal to dynamically adjust the retrieval threshold!
 * **Train API**: `POST http://localhost:8000/train` triggers a retraining loop.
 * **Generate API**: `POST http://localhost:8000/generate` (takes `prompt` and `max_tokens` JSON inputs).

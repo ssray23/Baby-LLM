@@ -89,6 +89,22 @@ During generation, the model:
 
 ---
 
+## 🧠 Knowledge Expansion & Retrieval Fallback
+
+To make Baby LLM more robust and conversational, the repository implements a miniature version of synthetic data generation and a retrieval-based fallback:
+
+### 1. Synthetic Data Generation (`generate_knowledge.py`)
+Neural networks learn by seeing diverse patterns. If you only train the model on one phrasing of a fact (e.g., "Where is Mount Kilimanjaro?"), it might fail if a user asks "Tell me about the location of Mount Kilimanjaro." 
+The `generate_knowledge.py` script takes simple core facts and programmatically expands them into 3-4 different conversational phrasings. This dramatically increases the model's robustness and semantic understanding without requiring manual data entry.
+
+### 2. TF-IDF Retrieval Fallback (`app.py`)
+Because our 4-layer toy model is prone to hallucination when faced with entirely unknown queries, the FastAPI backend uses a dual-routing system:
+1. When a user asks a question, the server first compares the query against all known facts using a `scikit-learn` **TF-IDF Vectorizer** (evaluating keyword overlap and relevance).
+2. If it finds a highly confident exact match in the `data/` directory, it instantly returns the factual, exact answer.
+3. If there is no confident match, it falls back to the **generative Transformer (Baby LLM)** to creatively predict the answer word-by-word using the autoregressive sampling loop.
+
+---
+
 ## 📂 Project Structure
 
 ```
